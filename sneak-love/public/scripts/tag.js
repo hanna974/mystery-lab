@@ -3,6 +3,11 @@ import APIservice from "./api-service.js";
 const tag = document.getElementById("new_tag_name");
 const btn = document.getElementById("btn_new_tag");
 const selectTags = document.getElementById("tags");
+const tagList = document.getElementById("tag_list");
+const checkboxes = document.getElementsByClassName("checkbox");
+
+
+getChecked("tags");
 
 console.log(tag);
 
@@ -21,3 +26,5 @@ function handleTagCreate(evt) {
 }
 
 btn.onclick = handleTagCreate;
+
+

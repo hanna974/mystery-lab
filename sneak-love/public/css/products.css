@@ -18,8 +18,8 @@ aside.tag-wrapper {
   align-items: center;
 }
 
-.checkbox{
-  margin-right: .4rem; 
+.checkbox {
+  margin-right: .4rem;
 }
 
 .products-wrapper {
@@ -58,12 +58,14 @@ h4.products-title {
   margin-right: 4%;
   margin-bottom: 4%;
   transition: all .2s ease-in;
-  transition-property:box-shadow;
+  transition-property: box-shadow;
+  padding: 20px;
 }
 
 .product-item-wrapper:hover {
   box-shadow: inset 0 -3px 0 0 #111;
 }
+
 .product-img {
   margin-bottom: .5rem;
   width: 100%;
@@ -91,4 +93,3 @@ h4.products-title {
   font-size: .9rem;
   margin-bottom: .5rem;
 }
-

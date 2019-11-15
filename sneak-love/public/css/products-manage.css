@@ -2,7 +2,6 @@
   padding: 2rem 1.2rem;
   height: calc(100vh - (84px));
   flex-direction: column;
-  
 }
 
 h3.manage-products-title {
@@ -15,7 +14,8 @@ h3.manage-products-title {
 
 .product-manage-table {
   border: 1px solid;
-  width: 80%
+  width: 80%;
+  margin-bottom: 50px
 }
 
 .table-row {
@@ -44,7 +44,6 @@ h3.manage-products-title {
   color: rgb(52, 52, 255);
 }
 
-.table-image{
+.table-image {
   width: 30px;
 }
-

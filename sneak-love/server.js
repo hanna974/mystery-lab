@@ -4,6 +4,7 @@ require("dotenv").config();
 require("./config/mongodb"); // database initial setup
 require("./utils/helpers-hbs"); // utils for hbs templates
 const path = require("path");
+const flash = require("connect-flash");
 
 // base dependencies
 const express = require("express");
@@ -41,6 +42,12 @@ app.locals.site_url = process.env.SITE_URL;
 // used in front end to perform ajax request (var instead of hardcoded)
 
 // CUSTOM MIDDLEWARE
+app.use(flash());
+app.use(function exposeFlashMessage(req, res, next) {
+  res.locals.success_msg = req.flash("success");
+  res.locals.error_msg = req.flash("error");
+  next();
+});
 
 // check if user is logged in...
 // usecases : conditional display in hbs templates

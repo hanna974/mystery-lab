@@ -16,16 +16,22 @@ router.get("/home", (req, res) => {
 });
 
 router.get("/sneakers/collection", (req, res) => {
-  sneaker.find().then(dbRes => {
-    console.log(dbRes);
-    res.render("products", { sneakers: dbRes });
+  tagModel.find().then(result => {
+    sneaker.find().then(dbRes => {
+      res.render("products", {
+        sneakers: dbRes,
+        tags: result,
+        scripts: ["tag"]
+      });
+    });
   });
 });
 
 router.get("/sneakers/:cat", (req, res) => {
-  sneaker.find({ category: { $eq: req.params.cat } }).then(dbRes => {
-    console.log(dbRes);
-    res.render("products", { sneakers: dbRes });
+  tagModel.find().then(result => {
+    sneaker.find({ category: { $eq: req.params.cat } }).then(dbRes => {
+      res.render("products", { sneakers: dbRes, tags: result });
+    });
   });
 });
 
@@ -38,40 +44,40 @@ router.get("/one-product/:id", (req, res) => {
 // WHEN USER IS LOGGED-IN = ADD, MANAGE, EDIT
 // ADD SNEAKERS
 router.get("/prod-add", protectUserRoute, (req, res) => {
-  res.render("products_add", {
-    tags: ["result de ta db tags (all)"],
-    scripts: ["tag"]
+  tagModel.find().then(dbRes => {
+    res.render("products_add", {
+      tags: dbRes,
+      scripts: ["tag"]
+    });
   });
 });
 
 router.post("/tag-add", protectUserRoute, (req, res) => {
-  console.log(req.body);
   tagModel.create(req.body).then(dbRes => {
+    // req.flash("success", "Tag successfully created");
     res.send(dbRes);
   });
 });
+
+// router.post("/product-filter", (req, res) => {
+//   console.log(req.body);
+//   sneaker.find({ tags: { $eq: req.body } }).then(dbRes => {
+//     res.send(dbRes);
+//   });
+// });
 
 router.post(
   "/prod-add",
   protectUserRoute,
   uploader.single("image"),
   (req, res) => {
-    const newSneaker = {
-      name: req.body.name,
-      ref: req.body.ref,
-      size: req.body.size,
-      description: req.body.description,
-      price: req.body.price,
-      image: req.body.image,
-      category: req.body.category,
-      tags: req.body.tags
-    };
+    const newSneaker = req.body;
     if (req.file) {
-      req.body.image = req.file.secure_url;
+      newSneaker.image = req.file.secure_url;
     }
     sneaker.create(newSneaker).then(dbRes => {
-      console.log("New Sneaker created succesfully", dbRes);
-      res.redirect("/prod-manage");
+      req.flash("success", "Sneaker successfully created");
+      res.redirect("/prod-add");
     });
   }
 );
@@ -86,6 +92,7 @@ router.get("/prod-manage", protectUserRoute, (req, res) => {
 
 router.get("/product-delete/:id", protectUserRoute, (req, res) => {
   sneaker.findByIdAndDelete(req.params.id).then(dbRes => {
+    req.flash("success", "Sneaker deleted");
     res.redirect("/prod-manage");
   });
 });
@@ -108,6 +115,7 @@ router.post("/product-edit/:id", protectUserRoute, (req, res) => {
       tags: req.body.tags
     })
     .then(dbRes => {
+      req.flash("success", "Sneaker edited");
       res.redirect("/prod-manage");
     })
     .catch(dbErr => console.error(dbErr));
@@ -123,6 +131,7 @@ router.post("/signup", (req, res) => {
     .findOne({ email: req.body.email })
     .then(dbRes => {
       if (dbRes) {
+        req.flash("error", "You already have an account, please signin :)");
         res.redirect("/signin");
       } else {
         const salt = bcrypt.genSaltSync(10);
@@ -130,8 +139,8 @@ router.post("/signup", (req, res) => {
         req.body.password = hashed;
 
         user.create(req.body).then(result => {
-          console.log("new user", result);
           req.session.currentUser = result;
+          req.flash("success", "Welcome");
           res.redirect("/");
         });
       }
@@ -151,16 +160,16 @@ router.post("/signin", (req, res) => {
     .findOne({ email: req.body.email })
     .then(dbRes => {
       if (!dbRes) {
+        req.flash("error", "You don't have an account yet. Please sign up");
         res.redirect("/signup");
-        throw "You don't have an account yet. Please sign up";
       } else {
         if (bcrypt.compareSync(req.body.password, dbRes.password)) {
           req.session.currentUser = dbRes;
+          req.flash("success", "Welcome");
           res.redirect("/");
-          throw "Welcome";
         }
+        req.flash("error", "wrong credentials");
         res.redirect("/signin");
-        throw "Wrong password";
       }
     })
     .catch(dbErr => {
