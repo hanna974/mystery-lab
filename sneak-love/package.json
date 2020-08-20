@@ -4,7 +4,7 @@
   "description": "Good news : Your team has been selected by our final client !",
   "main": "server.js",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "cloudinary": "^1.14.0",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^3.0.0",
